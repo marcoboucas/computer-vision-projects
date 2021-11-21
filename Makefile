@@ -1,7 +1,7 @@
 lint:
-	python -m pylint palabox
-	python -m mypy palabox
-	python -m flake8 palabox
+	python -m pylint src notebooks
+	python -m mypy src notebooks
+	python -m flake8 src notebooks
 
 test:
 	pytest
@@ -36,3 +36,6 @@ coverage:
 
 check-gpu:
 	python -m scripts.check_gpu
+
+jupyter-theme:
+	jt -t monokai -f fira -fs 13 -nf ptsans -nfs 11 -N -kl -cursw 5 -cursc r -cellw 95% -T
