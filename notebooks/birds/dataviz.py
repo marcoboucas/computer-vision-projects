@@ -47,10 +47,10 @@ print(train_files.shape)
 train_files.head(5)
 
 print(f"We currently have {train_files['label'].unique().shape[0]} classes")
-train_files['label'].value_counts().head(20).plot.barh(title="Distribution of the different labels");
+train_files["label"].value_counts().head(20).plot.barh(title="Distribution of the different labels")
 
 plt.title("Distribution of the number of photos per class")
-sns.histplot(x=train_files["label"].value_counts(), bins=50, kde=True);
+sns.histplot(x=train_files["label"].value_counts(), bins=50, kde=True)
 
 # +
 # Display some examples
@@ -82,7 +82,9 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 net.to(device=DEVICE)
 
 transform = transforms.Compose(
-    [transforms.ToTensor(),]
+    [
+        transforms.ToTensor(),
+    ]
 )
 
 train_set = BirdsDataset("train", transform=transform)
@@ -93,12 +95,17 @@ trainloader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_wor
 testloader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
 criterion = torch.nn.CrossEntropyLoss()
 
-optimizer = torch.optim.Adam(net.parameters(), lr=5e-3, )
+optimizer = torch.optim.Adam(
+    net.parameters(),
+    lr=5e-3,
+)
 
 # +
 for epoch in range(EPOCHS):  # loop over the dataset multiple times
     running_loss = 0.0
-    for i, data in tqdm(enumerate(trainloader, 0), total=len(train_set)//BATCH_SIZE, desc=f"EPOCH {epoch}"):
+    for i, data in tqdm(
+        enumerate(trainloader, 0), total=len(train_set) // BATCH_SIZE, desc=f"EPOCH {epoch}"
+    ):
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data
         inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)
@@ -113,12 +120,11 @@ for epoch in range(EPOCHS):  # loop over the dataset multiple times
 
         # print statistics
         running_loss += loss.item()
-        if i % 2000 == 1999:    # print every 2000 mini-batches
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 2000))
+        if i % 2000 == 1999:  # print every 2000 mini-batches
+            print("[%d, %5d] loss: %.3f" % (epoch + 1, i + 1, running_loss / 2000))
             running_loss = 0.0
 
-print('Finished Training')
+print("Finished Training")
 torch.save(net.state_dict(), os.path.join(Config.ROOT_DIRECTORY, "models", "birds", "ScratchModel"))
 # -
 
@@ -126,7 +132,9 @@ torch.save(net.state_dict(), os.path.join(Config.ROOT_DIRECTORY, "models", "bird
 predictions = []
 truth = []
 with torch.no_grad():
-    for i, data in tqdm(enumerate(testloader, 0), total=len(test_set)//BATCH_SIZE, desc=f"Compute predictions"):
+    for i, data in tqdm(
+        enumerate(testloader, 0), total=len(test_set) // BATCH_SIZE, desc=f"Compute predictions"
+    ):
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data
         inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)
@@ -143,4 +151,4 @@ from sklearn.metrics import (
 
 print(classification_report(truth, predictions))
 
-ConfusionMatrixDisplay(confusion_matrix(truth, predictions)).plot();
+ConfusionMatrixDisplay(confusion_matrix(truth, predictions)).plot()
